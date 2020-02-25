@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PARTIE4</title>
+<style> h3{
+ margin-top: -500px;
+    margin-left:50px;
+}
+.dara{
+	 margin-left:500px;
+}
+/*mise en place de la legende -->*/
+	.candidats {
+		margin: 100 !important;
+		margin-left:1000px;
+	}
+
+	.key-dot {
+		display: inline-block;
+		height: 10px;
+		margin-right: .100em;
+		width: 10px;
+	}
+
+	.legend {
+		margin-right:20px;
+		margin-left:-200px;
+	}
+
+	.Macky { background:  brown;}
+	.Idrissa { background: orange;}
+	.Ousmane { background: red;}
+	.Issa { background: green;}
+	.Madicke { background: blue;};
+     }
+   
+</style>
+	<style>
+
+	/*mise en forme de l'axe x*/
+
+	#xaxis .domain {
+		fill:black;
+		stroke:#000;
+	}
+	/*la taille des écritures sur les deux axes*/
+
+	#xaxis text, #yaxis text {
+		font-size: 15px;
+	}
+	
+	</style>
+</head>
+<body>
+	<div id="wrapper">
+	</div>
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<!--L'execution du code demande de la connexion -->
+	
+	<script>
+	
+//chargement des données
+		var candidats= ['Madické Niang', 'Issa Sall', 'Ousmane Sonko', 'Idrissa Seck', 'Macky Sall'];
+		var part = [1.48,4.07,15.67,20.51,58.26];
+
+		var colors = ['blue','green','red','orange','brown'];
+
+		var grid = d3.range(6).map(function(i){
+			return {'x1':0,'y1':0,'x2':0,'y2':0};
+		});
+
+		var tickVals = grid.map(function(d,i){
+			if(i>0){ return i*10; }
+			else if(i===0){ return "60";}
+		});
+//dimension et coordonnées de l'axe x par rapport à l'axe X
+		var xscale = d3.scale.linear()
+						.domain([0,60])
+						.range([0,600]);
+//dimension et coordonnées de l'axe y par rapport à l'axe Y
+		var yscale = d3.scale.linear()
+						.domain([0,candidats.length])
+						.range([50,400]);
+//Maniement des barres
+		var colorScale = d3.scale.quantize()
+						.domain([0,candidats.length])
+						.range(colors);
+//Cadre de dessin du graphique
+		var canvas = d3.select('#wrapper')
+						.append('svg')
+						.attr({'width':900,'height':550});
+
+		var grids = canvas.append('g')
+						  .attr('id','grid')
+						  .attr('transform','translate(100,0)')
+						  .selectAll('line')
+						  .data(grid)
+						  .enter()
+						  .append('line')
+						  .attr({'x1':function(d,i){ return i*30; },
+								 'y1':function(d){ return d.y1; },
+								 'x2':function(d,i){ return i*30; },
+								 'y2':function(d){ return d.y2; },
+							})
+						  
+//caracéristiques de l'axe x
+		var	xAxis = d3.svg.axis();
+			xAxis
+				.orient('bottom')
+				.scale(xscale)
+				.tickSize(2)
+				.tickValues(tickVals);
+//caracéristiques de l'axe y
+		var	yAxis = d3.svg.axis();
+			yAxis
+				.orient('left')
+				.scale(yscale)
+				.tickSize(2)
+				.tickFormat(function(d,i){ return candidats[i]; })
+				.tickValues(d3.range(100));
+//axe vertical
+		var y_xis = canvas.append('g')
+						  .attr("transform", "translate(150,0)")
+						  .attr('id','yaxis')
+						  .call(yAxis);
+//placement de l'axe horizontal sur l'axe des grandes ordonnées
+		var x_xis = canvas.append('g')
+						  .attr("transform", "translate(150,400)")
+						  .attr('id','xaxis')
+						  .call(xAxis);
+//installation des barres
+		var chart = canvas.append('g')
+							.attr("transform", "translate(150,0)")
+							.attr('id','bars')
+							.selectAll('rect')
+							.data(part)
+							.enter()
+							.append('rect')
+							.attr('height',19)
+							.attr({'x':0,'y':function(d,i){ return yscale(i)-5; }})
+							.style('fill',function(d,i){ return colorScale(i); })
+							.attr('width',function(d){ return 10; });
+
+		var transit = d3.select("svg").selectAll("rect")
+						    .data(part)
+						    .transition()
+						    .duration(2000) 
+						    .attr("width", function(d) {return xscale(d); });
+						
+	</script>
+
+	<!--Légende et titrage des axes-->
+	
+	<div class="legend">
+	 <h3> </h3> 
+     <div class="legend1"> <p class="candidats"><span class="key-dot Macky Sall "></span>Macky Sall</p> </div>
+     <div class="legend1"> <p class="candidats"><span class="key-dot Idrissa Seck"></span>Idrissa Seck</p> </div>
+     <div class="legend1"> <p class="candidats"><span class="key-dot Ousmane Sonko"></span>Ousmane Sonko</p> </div>
+    <div class="legend1"> <p class="candidats"><span class="key-dot Issa Sall "></span>Issa Sall </p> </div>
+     <div class="legend1"> <p class="candidats"><span class="key-dot Madicke Niang"></span>Madicke Niang</p> </div>
+	 </div>
+
+	 <div class="you"><strong id="you">Candidat</strong></div>
+	</div><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+	<div class="dara"><strong id="dara">Resultats obtenus en %</strong></div>
+
+</body>
+</html>
